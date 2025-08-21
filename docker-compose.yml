@@ -1,0 +1,52 @@
+name: movie_directory
+services:
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:9.1.2
+    container_name: elasticsearch
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+    ports:
+      - "9200:9200"
+    networks:
+      - elk
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:9.1.2
+    container_name: kibana
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+    ports:
+      - "5601:5601"
+    depends_on:
+      - elasticsearch
+    networks:
+      - elk
+
+  filebeat:
+    image: docker.elastic.co/beats/filebeat:9.1.2
+    container_name: filebeat
+    user: root
+    volumes:
+      - ./filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
+      - ./logger/app.log:/logs/app.log:ro
+    depends_on:
+      - elasticsearch
+    networks:
+      - elk
+
+  goapp:
+    build: .
+    ports:
+      - "8000:8000"
+    container_name: movie_directory_app
+    volumes:
+      - ./logger/app.log:/app/logger/app.log
+    depends_on:
+      - filebeat
+    networks:
+      - elk
+
+networks:
+  elk:
+    driver: bridge

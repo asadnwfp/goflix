@@ -1,0 +1,20 @@
+filebeat.inputs:
+  - type: filestream
+    id: my-filestream-id
+    enabled: true
+    paths:
+      - /logs/app.log
+    parsers:
+      - ndjson:
+          keys_under_root: true
+          add_error_key: true
+
+output.elasticsearch:
+  hosts: ["http://elasticsearch:9200"]
+  index: "filebeat-%{+yyyy.MM.dd}"
+
+setup.template.name: "filebeat"
+setup.template.pattern: "filebeat-*"
+
+setup.kibana:
+  host: "kibana:5601"
