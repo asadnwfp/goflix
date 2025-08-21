@@ -1,4 +1,4 @@
-name: movie_directory
+name: GoFlix
 services:
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:9.1.2
@@ -39,7 +39,7 @@ services:
     build: .
     ports:
       - "8000:8000"
-    container_name: movie_directory_app
+    container_name: goflix
     volumes:
       - ./logger/app.log:/app/logger/app.log
     depends_on:
