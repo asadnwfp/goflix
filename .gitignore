@@ -32,4 +32,4 @@ go.work.sum
 .vscode/
 
 # Ignore the logger files
-logger/**/*
+logger/app.log
